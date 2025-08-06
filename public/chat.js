@@ -15,7 +15,7 @@ let chatHistory = [
   {
     role: "assistant",
     content:
-      "Hello! I'm an LLM chat app powered by Cloudflare Workers AI. How can I help you today?",
+      "Salut cu ce te ajut ??",
   },
 ];
 let isProcessing = false;
@@ -108,18 +108,20 @@ async function sendMessage() {
       // Process SSE format
       const lines = chunk.split("\n");
       for (const line of lines) {
-        try {
-          const jsonData = JSON.parse(line);
-          if (jsonData.response) {
-            // Append new content to existing text
-            responseText += jsonData.response;
-            assistantMessageEl.querySelector("p").textContent = responseText;
+        if (line.startsWith("data:")) {
+          try {
+            const jsonData = JSON.parse(line.substring(5));
+            if (jsonData.response) {
+              // Append new content to existing text
+              responseText += jsonData.response;
+              assistantMessageEl.querySelector("p").textContent = responseText;
 
-            // Scroll to bottom
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+              // Scroll to bottom
+              chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+          } catch (e) {
+            console.error("Error parsing JSON:", e);
           }
-        } catch (e) {
-          console.error("Error parsing JSON:", e);
         }
       }
     }
@@ -130,7 +132,7 @@ async function sendMessage() {
     console.error("Error:", error);
     addMessageToChat(
       "assistant",
-      "Sorry, there was an error processing your request.",
+      "am o erroare scz.",
     );
   } finally {
     // Hide typing indicator
